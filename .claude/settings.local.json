@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/bjmalone724/bin/**)",
+      "Bash(bash -x ~/bin/ripshit 'import <filename>' test_fixtures.py)",
+      "Bash(~/bin/ripshit 'import <filename>' test_fixtures.py)",
+      "Bash(python3:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nInitial commit: ripshit pattern search wrapper\n\n- Bash script with <name>, <>, <word>, <number>, <filename> patterns\n- Python module with full API (search, lines, count)\n- Comprehensive test suite (30 tests, all passing)\n- Complete README with examples and documentation\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
