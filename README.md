@@ -1,4 +1,4 @@
-# ripit and Reg(ex)icide: Escaping Escaping Hell
+# ripit vs. regex: Escaping Escaping Hell
 
 ### What It Does
 
@@ -6,11 +6,17 @@ Converts intuitive patterns into regex so ripgrep can search code.
 
 ## Why This Exists
 
-**ripgrep is awesome.** Blazing fast, smart defaults, respects .gitignore, etc. Rust tools are great.
+**ripgrep is awesome.** 
 
-**But I often have to look up regex syntax.** And I loathe writing tricky escaping syntax when I am searching for special characters. 
+Blazing fast, smart defaults, respects .gitignore, etc. Rust tools are great.
 
-**ripit is my workaday solution:** Much of ripgrep's power with pattern syntax I can actually remember and type quickly. 
+**But I often have to look up regex syntax.** 
+
+I particularly loathe writing tricky escaping syntax when I am searching for special characters. 
+
+**ripit is my workaday solution:** 
+
+Much of ripgrep's power, much less regex-ery.
 
 ### The Core Idea: Aliasing for Regex
 
@@ -128,7 +134,7 @@ pattern="${pattern//)/\\)}"
 rg "$pattern" "$@"
 ```
 
-# Recommended for Keystroke Golfers: 
+### Recommended for Keystroke Golfers:
 ```bash
 alias rip='ripit' # in ~/.bashrc
 ```

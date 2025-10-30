@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 setup(
     name="ripit",
     version="0.1.0",
-    author="Your Name",
+    author="Brian Malone",
     description="Intuitive pattern search wrapper for ripgrep",
     long_description=long_description,
     long_description_content_type="text/markdown",
