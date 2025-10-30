@@ -1,6 +1,8 @@
-# ripit vs. regex: Escaping Escaping Hell
+# R\\.I\\.P\\. regex: Escaping Escaping Hell
 
-### What It Does
+(Irony: I had to escape \\ in Markdown for the title)
+
+## What "ripit" Does
 
 Converts intuitive patterns into regex so ripgrep can search code. 
 
@@ -37,10 +39,9 @@ Three simple patterns:
 
 **Everything else is literal.** Whitespace, punctuation, keywords - just type what is visible.
 
-```
-**Just like shell aliases** (`ll` for `ls -la`), ripit creates short, memorable names for common patterns. Plus, `<>` are way easier to type than escaping parentheses and backslashes. 
+**Just like shell aliases** (`ll` for `ls -la`), ripit creates short, memorable names for common patterns. Plus, `<>`'s are way easier to type than escaping parentheses and backslashes. 
 
-In ripit syntax, <> means "anything I don't want to search on". You can get more specific, but I often don't. The crucial advantage is that you don't need to bend over backwards to include literal characters. That's easy. 
+In ripit syntax, "<>" typically means "anything I don't want to match on".  You don't need to bend over backwards to escape literals, since you "escape" everything else, and type literals freely.
 
 ## Essential Lesson: AI-Assistants = Personalized Tooling
 
@@ -158,7 +159,7 @@ rip 'def <name>(<>):' -B 3 -A 5
 # Usage: show line numbers
 rip 'class <name>:' -n
 
-# Usage: limit search depth (like the old "look" script)
+# Usage: limit search depth (like "look" alias)
 rip 'import <name>' --max-depth 2
 
 # Usage: count matches
