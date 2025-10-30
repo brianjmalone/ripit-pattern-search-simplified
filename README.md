@@ -14,7 +14,7 @@ Blazing fast, smart defaults, respects .gitignore, etc. Rust tools are great.
 
 I particularly loathe writing tricky escaping syntax when I am searching for special characters. 
 
-**ripit is my workaday solution:** 
+**ripit is my workaday solution.** 
 
 Much of ripgrep's power, much less regex-ery.
 
@@ -33,6 +33,7 @@ Three simple patterns:
 - `<>` - matches anything
 - `<name>` - matches identifiers (letters, digits, underscores)
 - `<num>` - matches numbers (digits only)
+```
 
 **Everything else is literal.** Whitespace, punctuation, keywords - just type what is visible.
 
@@ -41,9 +42,9 @@ Three simple patterns:
 
 In ripit syntax, <> means "anything I don't want to search on". You can get more specific, but I often don't. The crucial advantage is that you don't need to bend over backwards to include literal characters. That's easy. 
 
-## The Essential Lesson: AI-Assisted Development means Personalized Tooling
+## Essential Lesson: AI-Assistants = Personalized Tooling
 
-ripit was built in a single conversation with Claude. 
+ripit was built in a single conversation with Claude.
 
 **Before AI:**
 - Custom tool = hours of dev time
@@ -53,9 +54,7 @@ ripit was built in a single conversation with Claude.
 **With AI:**
 - Concept → working tool in <1 hour
 - Rapid iteration on design
-- Economically viable to solve small problems
-
-The barrier to creating personalized tools is now low enough to optimize specific workflows without the traditional time investment.
+- Avoid idiosyncratic pain points
 
 At the end of this document, I show how to create a Python module if you want access to ripit there. 
 
@@ -90,9 +89,9 @@ rg "import\s+.*\s+from\s+.*"
 rip 'import <> from <>'
 ```
 
-It's a little like globbing, but with <> instead of *. 
+It's basically globbing, but with <> instead of *. 
 
-Often, you can get away with "rg import" but this provides a bit more safety and a small price in keystrokes. 
+Often, you can get away with "rg import" but this provides a bit more safety for a few keystrokes. 
 
 ```bash
 # Usage: find context managers
@@ -113,7 +112,7 @@ apt install ripgrep   # Ubuntu/Debian
 # 2. Save this script as ~/bin/ripit
 chmod +x ~/bin/ripit
 ```
-### The Complete Bash Script
+### Bash Script
 
 ```bash
 #!/bin/bash
@@ -150,7 +149,7 @@ rip 'for <name> in <>:'
 # Usage: find joint conditionals
 rip 'if <> and <>:'
 ```
-### With ripgrep Flags
+#### ....with ripgrep Flags
 
 ```bash
 # Usage: show context (3 lines before, 5 after)
@@ -306,19 +305,19 @@ Or copy `ripit.py` to your project.
 ### Quick Start
 
 ```python
-import ripit as rs
+import ripit as rip
 
 # Basic search - returns raw output string
-output = rs.search('def <name>(<>):', '--type', 'py')
+output = rip.search('def <name>(<>):', '--type', 'py')
 print(output)
 
 # Get list of matching lines (non-empty only)
-lines = rs.lines('class <name>:')
+lines = rip.lines('class <name>:')
 for line in lines:
     print(line)
 
 # Count matches across all files
-count = rs.count('import <>')
+count = rip.count('import <>')
 print(f"Found {count} import statements")
 ```
 
@@ -328,9 +327,9 @@ print(f"Found {count} import statements")
 
 ```python
 # Quick one-off searches
-rs.search(pattern: str, *args) -> str
-rs.lines(pattern: str, *args) -> List[str]
-rs.count(pattern: str, *args) -> int
+rip.search(pattern: str, *args) -> str
+rip.lines(pattern: str, *args) -> List[str]
+rip.count(pattern: str, *args) -> int
 ```
 
 All ripgrep arguments work: `'--type', 'py'`, `'-n'`, `'-C', '3'`, etc.
@@ -341,7 +340,7 @@ For reusable searches with default arguments:
 
 ```python
 # Create searcher with defaults
-searcher = rs.Ripit(default_args=['--type', 'py', '-n'])
+searcher = rip.Ripit(default_args=['--type', 'py', '-n'])
 
 # All methods apply default args automatically
 lines = searcher.lines('def <name>():')
@@ -357,23 +356,23 @@ output = searcher.search('class <name>(<>):')
 ### Python Examples
 
 ```python
-import ripit as rs
+import ripit as rip
 
 # Find all function definitions and count them
-funcs = rs.lines('def <name>(<>):', '--type', 'py')
+funcs = rip.lines('def <name>(<>):', '--type', 'py')
 print(f"Found {len(funcs)} functions")
 
 # Search with context (3 lines before/after)
-context = rs.search('class <name>:', '-C', '3')
+context = rip.search('class <name>:', '-C', '3')
 
 # Find all TODO comments
-todos = rs.lines('TODO', '--type', 'py')
+todos = rip.lines('TODO', '--type', 'py')
 
 # Count decorators in a specific directory
-decorator_count = rs.count('@<name>', 'src/')
+decorator_count = rip.count('@<name>', 'src/')
 
 # Create project-specific searcher
-py_searcher = rs.Ripit(default_args=['--type', 'py', '--max-depth', '3'])
+py_searcher = rip.Ripit(default_args=['--type', 'py', '--max-depth', '3'])
 imports = py_searcher.lines('from <> import <>')
 classes = py_searcher.lines('class <name>:')
 ```
