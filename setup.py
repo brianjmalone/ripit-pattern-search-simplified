@@ -4,7 +4,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
-    name="ripshit",
+    name="ripit",
     version="0.1.0",
     author="Your Name",
     description="Intuitive pattern search wrapper for ripgrep",
@@ -14,7 +14,7 @@ setup(
     python_requires=">=3.6",
     entry_points={
         'console_scripts': [
-            'ripshit-py=ripshit:main',
+            'ripit-py=ripit:main',
         ],
     },
     classifiers=[

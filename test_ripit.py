@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Comprehensive test suite for ripshit.
+Comprehensive test suite for ripit.
 Tests both the bash script and Python module against test_fixtures.py.
 """
 import subprocess
@@ -12,7 +12,7 @@ from pathlib import Path
 project_dir = Path(__file__).parent
 sys.path.insert(0, str(project_dir))
 
-import ripshit as rs
+import ripit as rs
 
 
 class Colors:
@@ -26,7 +26,7 @@ class Colors:
 
 
 class TestRunner:
-    """Test runner for ripshit patterns"""
+    """Test runner for ripit patterns"""
 
     def __init__(self, bash_script_path, fixtures_path):
         self.bash_script = bash_script_path
@@ -36,7 +36,7 @@ class TestRunner:
         self.tests_run = 0
 
     def run_bash(self, pattern: str) -> str:
-        """Run bash script version of ripshit"""
+        """Run bash script version of ripit"""
         try:
             result = subprocess.run(
                 [self.bash_script, pattern, str(self.fixtures)],
@@ -49,7 +49,7 @@ class TestRunner:
             return f"ERROR: {e}"
 
     def run_python(self, pattern: str) -> str:
-        """Run Python module version of ripshit"""
+        """Run Python module version of ripit"""
         try:
             return rs.search(pattern, str(self.fixtures))
         except Exception as e:
@@ -58,11 +58,11 @@ class TestRunner:
     def test_pattern(self, name: str, pattern: str, expected_in_output: list,
                      should_match_count: int = None):
         """
-        Test a ripshit pattern against fixtures.
+        Test a ripit pattern against fixtures.
 
         Args:
             name: Test name
-            pattern: ripshit pattern to test
+            pattern: ripit pattern to test
             expected_in_output: List of strings that should appear in output
             should_match_count: Minimum number of matches expected (optional)
         """
@@ -129,10 +129,10 @@ class TestRunner:
 
 
 def main():
-    """Run all ripshit tests"""
+    """Run all ripit tests"""
     # Paths
     home = Path.home()
-    bash_script = home / "bin" / "ripshit"
+    bash_script = home / "bin" / "ripit"
     fixtures = Path(__file__).parent / "test_fixtures.py"
 
     # Check prerequisites
@@ -144,7 +144,7 @@ def main():
         print(f"{Colors.RED}ERROR: Test fixtures not found at {fixtures}{Colors.END}")
         return 1
 
-    print(f"{Colors.BOLD}ripshit Test Suite{Colors.END}")
+    print(f"{Colors.BOLD}ripit Test Suite{Colors.END}")
     print(f"Bash script: {bash_script}")
     print(f"Fixtures: {fixtures}")
     print(f"{'=' * 60}")
@@ -311,36 +311,20 @@ def main():
         should_match_count=3
     )
 
-    # Test 21: <word> pattern - alphabetic only
-    runner.test_pattern(
-        "Alphabetic words with <word>",
-        "def <word>(<>):",
-        ["def fibonacci():"],
-        should_match_count=1
-    )
-
-    # Test 22: <number> pattern - digits
+    # Test 21: <num> pattern - digits
     runner.test_pattern(
         "Number assignments",
-        "<name> = <number>",
+        "<name> = <num>",
         ["x = 42", "count = 100", "zero = 0", "answer = 42"],
         should_match_count=4
     )
 
-    # Test 23: <filename> pattern - filenames
+    # Test 22: <name> pattern for imports
     runner.test_pattern(
-        "Filename pattern",
-        'import <filename>',
+        "Import identifiers",
+        'import <name>',
         ["import os", "import json", "import sys", "import math"],
         should_match_count=4
-    )
-
-    # Test 24: <filename> in strings
-    runner.test_pattern(
-        "Filenames in string assignments",
-        '<name> = "<filename>',
-        ['config_file = "app-config', 'data_file = "user_data'],
-        should_match_count=2
     )
 
     # Test 25: For loops (with colons, not comprehensions)

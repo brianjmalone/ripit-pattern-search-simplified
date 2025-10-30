@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-ripshit - Intuitive pattern search wrapper for ripgrep
+ripit - Intuitive pattern search wrapper for ripgrep
 Provides simple pattern syntax that compiles to regex for code searching.
 """
 import subprocess
@@ -22,12 +22,12 @@ def _check_ripgrep():
         )
 
 
-class Ripshit:
-    """Main ripshit search interface"""
+class Ripit:
+    """Main ripit search interface"""
 
     def __init__(self, default_args: Optional[List[str]] = None):
         """
-        Initialize Ripshit searcher.
+        Initialize Ripit searcher.
 
         Args:
             default_args: Default arguments to pass to ripgrep (e.g., ['--type', 'py'])
@@ -37,14 +37,12 @@ class Ripshit:
 
     def _convert_pattern(self, pattern: str) -> str:
         """
-        Convert ripshit patterns to regex.
+        Convert ripit patterns to regex.
 
         Patterns:
             <> - matches anything (.*)
             <name> - matches identifiers (\\w+)
-            <word> - matches alphabetic only ([a-zA-Z]+)
-            <number> - matches digits (\\d+)
-            <filename> - matches filenames ([a-zA-Z0-9_-]+)
+            <num> - matches digits (\\d+)
         """
         # Escape literal characters FIRST (before pattern substitution)
         # Escape literal parentheses
@@ -59,12 +57,10 @@ class Ripshit:
         pattern = pattern.replace('{', r'\{')
         pattern = pattern.replace('}', r'\}')
 
-        # Convert ripshit patterns to regex AFTER escaping
+        # Convert ripit patterns to regex AFTER escaping
         pattern = pattern.replace('<>', '.*')
         pattern = pattern.replace('<name>', r'\w+')
-        pattern = pattern.replace('<word>', '[a-zA-Z]+')
-        pattern = pattern.replace('<number>', r'\d+')
-        pattern = pattern.replace('<filename>', '[a-zA-Z0-9_-]+')
+        pattern = pattern.replace('<num>', r'\d+')
 
         return pattern
 
@@ -73,7 +69,7 @@ class Ripshit:
         Search for pattern and return raw output.
 
         Args:
-            pattern: ripshit pattern to search for
+            pattern: ripit pattern to search for
             *args: additional arguments to pass to ripgrep
 
         Returns:
@@ -98,7 +94,7 @@ class Ripshit:
         Search for pattern and return list of matching lines.
 
         Args:
-            pattern: ripshit pattern to search for
+            pattern: ripit pattern to search for
             *args: additional arguments to pass to ripgrep
 
         Returns:
@@ -112,7 +108,7 @@ class Ripshit:
         Count matches for pattern.
 
         Args:
-            pattern: ripshit pattern to search for
+            pattern: ripit pattern to search for
             *args: additional arguments to pass to ripgrep
 
         Returns:
@@ -135,22 +131,22 @@ class Ripshit:
 # Convenience functions for quick usage
 def search(pattern: str, *args) -> str:
     """Quick search function"""
-    return Ripshit().search(pattern, *args)
+    return Ripit().search(pattern, *args)
 
 
 def lines(pattern: str, *args) -> List[str]:
     """Quick lines function"""
-    return Ripshit().lines(pattern, *args)
+    return Ripit().lines(pattern, *args)
 
 
 def count(pattern: str, *args) -> int:
     """Quick count function"""
-    return Ripshit().count(pattern, *args)
+    return Ripit().count(pattern, *args)
 
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        print("Usage: ripshit <pattern> [ripgrep args...]", file=sys.stderr)
+        print("Usage: ripit <pattern> [ripgrep args...]", file=sys.stderr)
         sys.exit(1)
 
     pattern = sys.argv[1]

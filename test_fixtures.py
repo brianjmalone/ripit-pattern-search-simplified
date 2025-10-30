@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Test fixtures for ripshit - contains realistic Python code with all searchable patterns.
-This file serves as the corpus for testing ripshit pattern matching.
+Test fixtures for ripit - contains realistic Python code with all searchable patterns.
+This file serves as the corpus for testing ripit pattern matching.
 """
 import os
 import json

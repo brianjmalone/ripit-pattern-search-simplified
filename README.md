@@ -1,62 +1,101 @@
-# ripshit and Reg(ex)icide: Escaping Escaping Hell
-
-## Why This Exists
-
-**ripgrep is awesome.** Blazing fast, smart defaults, respects .gitignore - it's everything grep should have been. Built in Rust, it's a perfect example of how modern tools can be orders of magnitude better than their predecessors.
-
-**But I can never remember regex syntax.** And I absolutely loathe escaping things. 
-
-**Globbing is too weak.** `*.py` finds files, but can't find patterns inside them.
-
-**ripshit is my solution:** Take ripgrep's power, add pattern syntax I can actually remember and type quickly. 
-
-### The Core Idea: Aliasing for Regex
-
-ripshit is fundamentally an **aliasing system for regex patterns** - creating shortcuts for the patterns I use constantly:
-
-```bash
-# Regex patterns (I can never remember these)
-\w+                →  <name>
-.*                 →  <>
-[a-zA-Z]+          →  <word>
-\d+                →  <number>
-[a-zA-Z0-9_-]+     →  <filename>
-```
-
-**Just like shell aliases** (`ll` for `ls -la`), ripshit creates short, memorable names for common patterns. Plus, `<>` are way easier to type than escaping parentheses and backslashes.
-
-**ripgrep gave us the speed. ripshit gives us syntax that doesn't make me want to scream.**
-
-### The Problem (Real Example)
-
-Find Python functions in a codebase:
-
-```bash
-# Usage: find all function definitions with regex
-rg "def\s+\w+\s*\([^)]*\)\s*:"
-
-# Usage: find all function definitions with ripshit
-ripshit 'def <name>(<>):'
-```
-
-**5 seconds vs 2 minutes.** And the ripshit pattern is actually memorable next week.
+# ripit and Reg(ex)icide: Escaping Escaping Hell
 
 ### What It Does
 
-Converts intuitive patterns into regex so ripgrep can search code:
+Converts intuitive patterns into regex so ripgrep can search code. 
+
+## Why This Exists
+
+**ripgrep is awesome.** Blazing fast, smart defaults, respects .gitignore, etc. Rust tools are great.
+
+**But I often have to look up regex syntax.** And I loathe writing tricky escaping syntax when I am searching for special characters. 
+
+**ripit is my workaday solution:** Much of ripgrep's power with pattern syntax I can actually remember and type quickly. 
+
+### The Core Idea: Aliasing for Regex
+
+ripit is fundamentally an **aliasing system for regex patterns** - creating shortcuts for limited patterns I often need:
 
 ```bash
-# Usage: find all function definitions
-ripshit 'def <name>(<>):'
+# Regex ..............ripit
+.*                 →  <>
+\w+                →  <name>
+\d+                →  <num>
 
-# Usage: find context managers
-ripshit 'with <> as <name>:'
+Three simple patterns:
 
-# Usage: find specific filenames in imports
-ripshit 'import <filename>'
+- `<>` - matches anything
+- `<name>` - matches identifiers (letters, digits, underscores)
+- `<num>` - matches numbers (digits only)
+
+**Everything else is literal.** Whitespace, punctuation, keywords - just type what is visible.
+
+```
+**Just like shell aliases** (`ll` for `ls -la`), ripit creates short, memorable names for common patterns. Plus, `<>` are way easier to type than escaping parentheses and backslashes. 
+
+In ripit syntax, <> means "anything I don't want to search on". You can get more specific, but I often don't. The crucial advantage is that you don't need to bend over backwards to include literal characters. That's easy. 
+
+## The Essential Lesson: AI-Assisted Development means Personalized Tooling
+
+ripit was built in a single conversation with Claude. 
+
+**Before AI:**
+- Custom tool = hours of dev time
+- "Not worth it" for small frictions
+- Risk of scope creep
+
+**With AI:**
+- Concept → working tool in <1 hour
+- Rapid iteration on design
+- Economically viable to solve small problems
+
+The barrier to creating personalized tools is now low enough to optimize specific workflows without the traditional time investment.
+
+At the end of this document, I show how to create a Python module if you want access to ripit there. 
+
+### The Problem: Escaping Escaping
+
+Here's ripit vs regex side-by-side:
+
+**Function Definitions**
+```bash
+# Regex
+rg "def\s+\w+\s*\([^)]*\)\s*:"
+
+# ripit
+rip 'def <name>(<>):'
 ```
 
-**All ripgrep flags work** - add `-B 3 -A 5`, `-n`, `--max-depth 2`, whatever is needed.
+**Class definitions**
+```bash
+# Regex
+rg "class\s+\w+\s*\([^)]*\)\s*:"
+
+# ripit
+rip 'class <name>(<>):'
+```
+
+**Import Statements**
+```bash
+# Regex
+rg "import\s+.*\s+from\s+.*"
+
+# ripit
+rip 'import <> from <>'
+```
+
+It's a little like globbing, but with <> instead of *. 
+
+Often, you can get away with "rg import" but this provides a bit more safety and a small price in keystrokes. 
+
+```bash
+# Usage: find context managers
+ripit 'with <> as <name>:'
+
+# Usage: find specific module imports
+ripit 'import <name>'
+```
+**All ripgrep flags work** - add `-B 3 -A 5`, `-n`, `--max-depth 2`, so it remains pretty expressive. 
 
 ## Installation
 
@@ -65,10 +104,10 @@ ripshit 'import <filename>'
 brew install ripgrep  # macOS
 apt install ripgrep   # Ubuntu/Debian
 
-# 2. Save this script as ~/bin/ripshit
-chmod +x ~/bin/ripshit
+# 2. Save this script as ~/bin/ripit
+chmod +x ~/bin/ripit
 ```
-### The Complete Script (17 lines)
+### The Complete Bash Script
 
 ```bash
 #!/bin/bash
@@ -76,12 +115,10 @@ chmod +x ~/bin/ripshit
 pattern="$1"
 shift
 
-# Convert ripshit patterns to regex
+# Convert ripit patterns to regex
 pattern="${pattern//<>/.*}"
 pattern="${pattern//<name>/\\w+}"
-pattern="${pattern//<word>/[a-zA-Z]+}"
-pattern="${pattern//<number>/\\d+}"
-pattern="${pattern//<filename>/[a-zA-Z0-9_-]+}"
+pattern="${pattern//<num>/\\d+}"
 
 # Escape literal parentheses
 pattern="${pattern//(/\\(}"
@@ -91,38 +128,22 @@ pattern="${pattern//)/\\)}"
 rg "$pattern" "$@"
 ```
 
-# Recommended:
+# Recommended for Keystroke Golfers: 
 ```bash
-alias rip='ripshit' # in ~/.bashrc
+alias rip='ripit' # in ~/.bashrc
 ```
 
-## Pattern Syntax
-
-Five simple patterns:
-
-- `<>` - matches anything
-- `<name>` - matches identifiers (alphanumeric + underscore)
-- `<word>` - matches alphabetic only
-- `<number>` - matches digits
-- `<filename>` - matches filenames (alphanumeric + underscore + hyphen)
-
-**Everything else is literal.** Whitespace, punctuation, keywords - just type what is visible.
-
-### Basic Searches
+### Basic Search Examples:
 ```bash
 # Usage: find class definitions
 rip 'class <name>:'
 
-# Usage: find imports
-rip 'import <>'
-
 # Usage: find loops
 rip 'for <name> in <>:'
 
-# Usage: find conditionals
+# Usage: find joint conditionals
 rip 'if <> and <>:'
 ```
-
 ### With ripgrep Flags
 
 ```bash
@@ -133,18 +154,14 @@ rip 'def <name>(<>):' -B 3 -A 5
 rip 'class <name>:' -n
 
 # Usage: limit search depth (like the old "look" script)
-rip 'import <filename>' --max-depth 2
+rip 'import <name>' --max-depth 2
 
 # Usage: count matches
 rip 'def <name>():' -c
 
 # Usage: show only filenames
 rip 'TODO' -l
-```
 
-### Targeting File Types
-
-```bash
 # Usage: search Python files only
 rip 'def <name>(<>):' --type py
 
@@ -156,31 +173,6 @@ rip 'function <name>' --type matlab
 
 # Usage: search multiple types
 rip 'class <name>' --type py --type js
-```
-
-### Real-World Examples
-
-```bash
-# Usage: find all function definitions with parameters
-rip 'def <name>(<>):'
-
-# Usage: find empty functions (no parameters)
-rip 'def <name>():'
-
-# Usage: find context managers with specific pattern
-rip 'with open(<filename>) as <name>:'
-
-# Usage: find exception handlers
-rip 'except <> as <name>:'
-
-# Usage: find config sections in INI files
-rip '[<name>]'
-
-# Usage: find YAML keys
-rip '<name>: <>'
-
-# Usage: find assignments to numbers
-rip '<name> = <number>'
 ```
 
 ### Finding specific Python idioms 
@@ -198,9 +190,6 @@ rip '{<>: <> for <>}'
 # Usage: find set comprehensions
 rip '{<> for <>}'
 
-# Usage: find lambda functions
-rip 'lambda <>:'
-
 # Usage: find decorators
 rip '@<name>'
 
@@ -210,19 +199,7 @@ rip 'f"<>"'
 # Usage: find old-style format strings
 rip '".format(<>)'
 
-# Usage: find assertions
-rip 'assert <>'
-
-# Usage: find yield statements
-rip 'yield <>'
-
-# Usage: find context managers (any pattern)
-rip 'with <> as <>:'
-
-# Usage: find try-except blocks
-rip 'try:' -A 5
-
-# Usage: find class methods with self
+# Usage: find class methods with self and other parameters
 rip 'def <name>(self, <>):'
 
 # Usage: find list slicing
@@ -232,72 +209,17 @@ rip '[<>:<>]'
 rip '<>, <> = <>'
 ```
 
-## Side-by-Side: ripshit vs Regex
-
-### Function Definitions
-
-```bash
-# Usage: find function definitions with regex
-rg "def\s+\w+\s*\([^)]*\)\s*:"
-
-# Usage: find function definitions with ripshit
-rip 'def <n>(<>):'
-```
-
-### Class Inheritance
-
-```bash
-# Usage: find class definitions with inheritance using regex
-rg "class\s+\w+\s*\([^)]*\)\s*:"
-
-# Usage: find class definitions with inheritance using ripshit
-rip 'class <n>(<>):'
-```
-
-### Context Managers
-
-```bash
-# Usage: find context managers with regex
-rg "with\s+.*\s+as\s+\w+\s*:"
-
-# Usage: find context managers with ripshit
-rip 'with <> as <name>:'
-```
-
-### Import Statements
-
-```bash
-# Usage: find import statements with regex
-rg "import\s+.*\s+from\s+.*"
-
-# Usage: find import statements with ripshit
-rip 'import <> from <>'
-```
-
-**Notice a pattern?** ripshit reads like English. Regex reads like line noise.
-
-**Note:** All examples use `<name>` for identifiers. This is the actual pattern - the script uses `<name>`, not `<n>`.
-
-## The Gap It Fills
-
-```
-String search          →  Too literal, too many false positives
-ripshit               →  ✓ Works for 90% of code searches
-Full regex            →  Too complex, wastes mental energy
-```
-
 ### When to Use Each
-
-**Use ripshit when:**
-- Exploring codebases quickly
-- Finding common code patterns
-- Results are needed NOW, not in 2 minutes
-- Readable patterns matter (for scripts that will be reused)
 
 **Use full regex when:**
 - Complex lookaheads/lookbehinds required
 - Truly unusual patterns
 - Regex-specific features are needed
+
+**Use ripit when:**
+- Exploring codebases quickly
+- Finding common code patterns
+- Readable patterns matter (for scripts that will be reused)
 
 **Use plain search when:**
 - Exact literal strings
@@ -305,7 +227,7 @@ Full regex            →  Too complex, wastes mental energy
 
 ## Origin Story
 
-This started with a simple bash script called `look` for searching flat MATLAB codebases:
+This project started with a simple bash script called `look` for shallow searches of codebases:
 
 ```bash
 #!/bin/bash
@@ -327,61 +249,25 @@ find . -maxdepth 1 -type f -exec grep -Hi "$search_string" {} \;
 # alias look="~/bin/search.sh"
 ```
 
-It worked for literals but failed for patterns. Adding regex meant escaping hell. ripshit bridges that gap.
+I still use that all the time, but it's inflexible. ripit is an extension of look. 
 
-## AI-Assisted Development
-
-ripshit was built in a single conversation with Claude, demonstrating how AI changes the tooling equation:
-
-**Before AI:**
-- Custom tool = hours of dev time
-- "Not worth it" for small frictions
-- Risk of scope creep
-
-**With AI:**
-- Concept → working tool in <1 hour
-- Rapid iteration on design
-- Economically viable to solve small problems
-
-The barrier to creating personalized tools is now low enough to optimize specific workflows without the traditional time investment.
-
-## Philosophy
-
-**Regex is powerful but hostile.** I need something between "grep a literal string" and "write a regex doctoral thesis."
-
-ripshit gives me:
-1. **Readable patterns** - `<n>` not `\w+`
-2. **No escaping** - parentheses are just parentheses
-3. **Memorable syntax** - I'll remember this next month
-4. **90% of regex power** - for 10% of the cognitive load
-
-### When NOT to Use ripshit
-
-**ripshit is NOT always going to work.** If precision or expressiveness is needed in production-grade code, don't use it. 
-
-**Use full regex when:**
-- Exact, unambiguous matches are required
-- Production code depends on it
-- Complex lookaheads/lookbehinds required
-- Critical search logic is being written
-
-**But if the goal is to get stuff done faster and grumble less?** This probably might be a use case. ripshit is for exploration, quick searches, and getting answers NOW instead of debugging regex for 10 minutes.
+Yes, I should be using fd. I know. It's an old alias!
 
 ## Limitations and Known Issues
 
-ripshit is a practical hack, not a perfect solution. Here's what doesn't work:
+ripit is a practical hack, not a perfect solution. Here's what doesn't work:
 
 ### Pattern Order Matters
 
-Because ripshit does simple string replacement, patterns are processed in a specific order:
+Because ripit does simple string replacement, patterns are processed in a specific order:
 1. Literal characters are escaped first: `(`, `)`, `[`, `]`, `{`, `}`
-2. Then ripshit patterns are replaced: `<>`, `<name>`, `<word>`, `<number>`, `<filename>`
+2. Then ripit patterns are replaced: `<>`, `<name>`, `<num>`
 
-**This means:** If you literally type `<name>` and want to search for that exact string, ripshit will replace it. There's no escape mechanism for patterns.
+**This means:** If you literally type `<name>` and want to search for that exact string, ripit will replace it. There's no escape mechanism for patterns.
 
 ### Regex Features Not Supported
 
-ripshit doesn't support advanced regex features:
+ripit doesn't support advanced regex features:
 - No lookaheads/lookbehinds
 - No backreferences
 - No optional groups (`?`, `+`, `*` on groups)
@@ -396,25 +282,25 @@ Some patterns might not work as expected:
 - Complex multi-line patterns may fail
 - Patterns with unusual whitespace might not match
 
-**The philosophy:** ripshit handles 80-90% of common searches. For the other 10-20%, use full regex or refine your pattern.
+**The philosophy:** ripit handles 80-90% of common searches. For the other 10-20%, use full regex or refine your pattern.
 
 ## Python Module (Optional)
 
-Want to use ripshit patterns in Python scripts? The Python module provides the same pattern syntax programmatically.
+Want to use ripit patterns in Python scripts? The Python module provides the same pattern syntax programmatically.
 
 ### Installation
 
 ```bash
-cd ~/projects/ripshit
+cd ~/projects/ripit
 pip install -e .
 ```
 
-Or copy `ripshit.py` to your project.
+Or copy `ripit.py` to your project.
 
 ### Quick Start
 
 ```python
-import ripshit as rs
+import ripit as rs
 
 # Basic search - returns raw output string
 output = rs.search('def <name>(<>):', '--type', 'py')
@@ -443,13 +329,13 @@ rs.count(pattern: str, *args) -> int
 
 All ripgrep arguments work: `'--type', 'py'`, `'-n'`, `'-C', '3'`, etc.
 
-#### Ripshit Class
+#### Ripit Class
 
 For reusable searches with default arguments:
 
 ```python
 # Create searcher with defaults
-searcher = rs.Ripshit(default_args=['--type', 'py', '-n'])
+searcher = rs.Ripit(default_args=['--type', 'py', '-n'])
 
 # All methods apply default args automatically
 lines = searcher.lines('def <name>():')
@@ -465,7 +351,7 @@ output = searcher.search('class <name>(<>):')
 ### Python Examples
 
 ```python
-import ripshit as rs
+import ripit as rs
 
 # Find all function definitions and count them
 funcs = rs.lines('def <name>(<>):', '--type', 'py')
@@ -481,7 +367,7 @@ todos = rs.lines('TODO', '--type', 'py')
 decorator_count = rs.count('@<name>', 'src/')
 
 # Create project-specific searcher
-py_searcher = rs.Ripshit(default_args=['--type', 'py', '--max-depth', '3'])
+py_searcher = rs.Ripit(default_args=['--type', 'py', '--max-depth', '3'])
 imports = py_searcher.lines('from <> import <>')
 classes = py_searcher.lines('class <name>:')
 ```
@@ -501,4 +387,4 @@ classes = py_searcher.lines('class <name>:')
 
 ---
 
-**ripshit: Because life's too short for regex syntax.**
+**ripit: Because life's too short for regex syntax.**
