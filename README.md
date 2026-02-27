@@ -18,7 +18,7 @@ I particularly loathe writing tricky escaping syntax when I am searching for spe
 
 **ripit is my workaday solution.** 
 
-Much of ripgrep's power, much less regex-ery.
+Much of ripgrep's power, much less regex-ery. It really shines in codebase exploration (e.g. ripit 'class <>:'), and was created with that in mind. 
 
 ### The Core Idea: Aliasing for Regex
 
