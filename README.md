@@ -10,9 +10,7 @@ Converts intuitive, easy-to-type patterns into regex so ripgrep can search code.
 
 **ripgrep is awesome.** Blazing fast, smart defaults, respects .gitignore, etc. Rust tools are great. That said, I often have to look up regex syntax. I particularly loathe writing tricky escaping syntax when I am searching for special characters. 
 
-**ripit is my workaday solution.** 
-
-Much of ripgrep's power, much less regex-ery. It really shines in codebase exploration (e.g. ripit 'class <>:'), and was created with that in mind. 
+**ripit is my workaday solution.** — ripgrep's power, but much less regex-ery. It really shines in codebase exploration (e.g. ripit 'class <>:'), and was created with that in mind. 
 
 ### The Core Idea: Aliasing for Regex
 
