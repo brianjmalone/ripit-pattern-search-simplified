@@ -61,7 +61,7 @@ At the end of this document, I show how to create a Python module if you want ac
 
 ### The Problem: Escaping Escaping
 
-Here's ripit vs regex side-by-side:
+Here's ripit vs regex side-by-side (I aliased it to 'rip' for convenience): 
 
 **Function Definitions**
 ```bash
