@@ -4,7 +4,7 @@
 
 ## What "ripit" Does
 
-Converts intuitive patterns into regex so ripgrep can search code. 
+Converts intuitive, easy-to-type patterns into regex so ripgrep can search code. 
 
 ## Why This Exists
 
