@@ -8,9 +8,7 @@ Converts intuitive, easy-to-type patterns into regex so ripgrep can search code.
 
 ## Why This Exists
 
-**ripgrep is awesome.** Blazing fast, smart defaults, respects .gitignore, etc. Rust tools are great.
-
-**But I often have to look up regex syntax.** I particularly loathe writing tricky escaping syntax when I am searching for special characters. 
+**ripgrep is awesome.** Blazing fast, smart defaults, respects .gitignore, etc. Rust tools are great. That said, I often have to look up regex syntax. I particularly loathe writing tricky escaping syntax when I am searching for special characters. 
 
 **ripit is my workaday solution.** 
 
